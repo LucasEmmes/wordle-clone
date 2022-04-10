@@ -10,10 +10,15 @@ const io = new Server(server);
 
 // Load words
 const fs = require("fs");
-let words = [];
-fs.readFile("5wle.csv", "utf-8", (err, data) => {
+let pick_words = [];
+let available_words = [];
+fs.readFile("list_picks.csv", "utf-8", (err, data) => {
     if (err) throw err;
-    words = data.split("\n");
+    pick_words = data.split("\n");
+});
+fs.readFile("available_words.csv", "utf-8", (err, data) => {
+    if (err) throw err;
+    available_words = data.split("\n");
 });
 
 app.get('/', (req, res) => {
@@ -23,7 +28,7 @@ app.get('/', (req, res) => {
 
 io.on('connection', (socket) => {
     // Pick a word
-    let socket_word = words[Math.floor(Math.random()*words.length)];
+    let socket_word = pick_words[Math.floor(Math.random()*pick_words.length)];
     console.log('A user connected. Their word is ' + socket_word);
     
     socket.on('evaluate', (guessed_word) => {
@@ -49,7 +54,7 @@ function evaluate(word, guess) {
     // Input checking
     if (typeof(guess) != "string") {response.status=1;}
     if (guess.length != 5) {response.status=1;}
-    if (words.indexOf(guess) == -1) {response.status=1;}
+    if (available_words.indexOf(guess) == -1) {response.status=1;}
     if (response.status) {return response;}
     
     // Prepare inputs
