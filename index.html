@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Socket.IO Wordle</title>
+        <style>
+            body {
+                margin: 0;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                background-color: rgb(60,60,60);
+            }
+
+            #hidden_input {
+                display: none;
+            }
+
+            #all_outputs {
+                width: 22em;
+                margin: 4em auto;
+            }
+            
+            .output_field {
+                font-size: 3em;
+                width: 1.2em;
+                text-align: center;
+                background-color: rgb(40,40,40);
+                color: rgb(211, 211, 211);
+                font-family: Arial, Helvetica, sans-serif;
+            }
+
+            #keyboard {
+                width: 28em;
+                margin: 6em auto;
+            }
+
+            .keyboard_letter {
+                font-size: 1.8em;
+                width: 1em;
+                text-align: center;
+                background-color: rgb(80, 80, 80);
+                color: rgb(211, 211, 211);
+                font-family: Arial, Helvetica, sans-serif;
+            }
+
+            .keyboard_row {
+                margin: 0 auto;
+            }
+
+            #kbr0 {
+                width: 25.8em;
+            }
+            #kbr1 {
+                width: 23.5em;
+            }
+            #kbr2 {
+                width: 21em;
+            }
+            
+            #warning_div {
+                visibility: hidden;
+                margin: 1.5em auto;
+                font-size: 2em;
+                width: 10em;
+                height: 3em;
+                border: 1px solid white;
+                text-align: center;
+                color: white;
+                background-color: rgb(80, 80, 80);
+            }
+        </style>
+    </head>
+
+    <body>
+        <div>
+            <input type="text" id="hidden_input" maxlength="1">
+        </div>
+
+        <div id="warning_div">
+            <p><span id="wrong_word"></span> is not a word</p>
+        </div>
+
+        <!-- OUTPUT -->
+        <div id="all_outputs">
+            <div id="output_row0">
+                <input type="text" class="output_field row_0" disabled>
+                <input type="text" class="output_field row_0" disabled>
+                <input type="text" class="output_field row_0" disabled>
+                <input type="text" class="output_field row_0" disabled>
+                <input type="text" class="output_field row_0" disabled>
+            </div>
+            <div id="output_row1">
+                <input type="text" class="output_field row_1" disabled>
+                <input type="text" class="output_field row_1" disabled>
+                <input type="text" class="output_field row_1" disabled>
+                <input type="text" class="output_field row_1" disabled>
+                <input type="text" class="output_field row_1" disabled>
+            </div>
+            <div id="output_row2">
+                <input type="text" class="output_field row_2" disabled>
+                <input type="text" class="output_field row_2" disabled>
+                <input type="text" class="output_field row_2" disabled>
+                <input type="text" class="output_field row_2" disabled>
+                <input type="text" class="output_field row_2" disabled>
+            </div>
+            <div id="output_row3">
+                <input type="text" class="output_field row_3" disabled>
+                <input type="text" class="output_field row_3" disabled>
+                <input type="text" class="output_field row_3" disabled>
+                <input type="text" class="output_field row_3" disabled>
+                <input type="text" class="output_field row_3" disabled>
+            </div>
+            <div id="output_row4">
+                <input type="text" class="output_field row_4" disabled>
+                <input type="text" class="output_field row_4" disabled>
+                <input type="text" class="output_field row_4" disabled>
+                <input type="text" class="output_field row_4" disabled>
+                <input type="text" class="output_field row_4" disabled>
+            </div>
+            <div id="output_row5">
+                <input type="text" class="output_field row_5" disabled>
+                <input type="text" class="output_field row_5" disabled>
+                <input type="text" class="output_field row_5" disabled>
+                <input type="text" class="output_field row_5" disabled>
+                <input type="text" class="output_field row_5" disabled>
+            </div>
+        </div>
+
+        <div id="keyboard">
+            <div class="keyboard_row" id="kbr0">
+                <input type="text" class="keyboard_letter" id="Q" disabled>
+                <input type="text" class="keyboard_letter" id="W" disabled>
+                <input type="text" class="keyboard_letter" id="E" disabled>
+                <input type="text" class="keyboard_letter" id="R" disabled>
+                <input type="text" class="keyboard_letter" id="T" disabled>
+                <input type="text" class="keyboard_letter" id="Y" disabled>
+                <input type="text" class="keyboard_letter" id="U" disabled>
+                <input type="text" class="keyboard_letter" id="I" disabled>
+                <input type="text" class="keyboard_letter" id="O" disabled>
+                <input type="text" class="keyboard_letter" id="P" disabled>
+            </div>
+            <div class="keyboard_row" id="kbr1">
+                <input type="text" class="keyboard_letter" id="A" disabled>
+                <input type="text" class="keyboard_letter" id="S" disabled>
+                <input type="text" class="keyboard_letter" id="D" disabled>
+                <input type="text" class="keyboard_letter" id="F" disabled>
+                <input type="text" class="keyboard_letter" id="G" disabled>
+                <input type="text" class="keyboard_letter" id="H" disabled>
+                <input type="text" class="keyboard_letter" id="J" disabled>
+                <input type="text" class="keyboard_letter" id="K" disabled>
+                <input type="text" class="keyboard_letter" id="L" disabled>
+            </div>
+            <div class="keyboard_row" id="kbr2">
+                <input type="text" class="keyboard_letter" id="Z" disabled>
+                <input type="text" class="keyboard_letter" id="X" disabled>
+                <input type="text" class="keyboard_letter" id="C" disabled>
+                <input type="text" class="keyboard_letter" id="V" disabled>
+                <input type="text" class="keyboard_letter" id="B" disabled>
+                <input type="text" class="keyboard_letter" id="N" disabled>
+                <input type="text" class="keyboard_letter" id="M" disabled>
+            </div>
+        </div>
+
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            var socket = io();
+            
+            let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            
+            let working_word = [];
+            let current_guess = 0;
+            Array.from(document.getElementsByClassName("output_field")).forEach(field => {field.value = "";})
+            
+            // Force focus to hidden input
+            var hidden_input = document.getElementById('hidden_input');
+            hidden_input.focus();
+
+            Array.from(document.getElementsByClassName("keyboard_letter")).forEach(key => {
+                key.value = key.id;
+            });
+
+            // INPUT HANDLING
+            document.addEventListener('keyup', handleKey);
+
+            function handleKey() {
+                let key = event.key.toUpperCase();
+
+                if (alphabet.indexOf(key) > -1) {
+                    // If space, add letter
+                    if (working_word.length < 5) {
+                        working_word.push(key);
+                    }
+
+                } else if (key == "ENTER") {
+                    // Test word if 5 letters long
+                    if (working_word.length == 5) {
+                        evalWord();
+                    }
+                    
+                    // DEBUGGING
+                    else {
+                        console.log("WORD IS NOW: " + working_word.join(""));
+                    }
+
+                } else if (key == "BACKSPACE") {
+                    // Remove last added letter
+                    working_word = working_word.splice(0, working_word.length-1);
+                }
+
+                update_output();
+            }
+
+            // VISUALS
+            function update_output() {
+                // Clear old outputs
+                let row = clear_output();
+
+                for (var i = 0; i < working_word.length; i++) {
+                    row[i].value = working_word[i];
+                }
+            }
+
+            function clear_output() {
+                let row = Array.from(document.getElementsByClassName("row_" + current_guess));
+                row.forEach(field => {field.value = "";});
+                return row;
+            }
+            
+            function change_color(eval) {
+                console.log(eval);
+                let row = Array.from(document.getElementsByClassName("row_" + current_guess));
+                for (var i = 0; i < 5; i++) {
+                    let color = "";
+                    switch (eval[i]) {
+                        case 0:
+                            color = "rgb(10,10,10)";
+                            break;
+
+                        case 1:
+                            color = "rgb(190,190,40)";
+                            break;
+
+                        case 2:
+                            color = "rgb(40,175,0)";
+                            break;
+
+                        default:
+                            break;
+                    }
+                    row[i].style.background = color;
+                }
+            }
+
+            // SOCKET SHENANIGANS
+            function evalWord() {
+                let guess = working_word.join("");
+                socket.emit("evaluate", guess);
+            }
+
+
+            socket.on('evaluate', function (eval_response) {
+                let response = JSON.parse(eval_response);
+                if (!response.status) {
+                    
+                    if (JSON.stringify(response.eval) === "[2,2,2,2,2]") {
+                        document.removeEventListener('keyup', handleKey);
+                        let announce = document.getElementById("warning_div");
+                        announce.innerHTML = "<p>Congrats!</p>";
+                        announce.style.visibility = "visible";
+                    }
+
+                    // Mark keyboard
+                    for (let i = 0; i < 5; i++) {
+                        let key_field = document.getElementById(working_word[i]);
+                        
+                        console.log(response.eval[i]);
+                        console.log(key_field.style.background);
+                        switch (response.eval[i]) {
+                            case 0:
+                                if (key_field.style.background == "") {
+                                    key_field.style.background = "rgb(10,10,10)";
+                                }
+                                break;
+                                
+                            case 1:
+                                if (key_field.style.background == "") {
+                                    key_field.style.background = "rgb(190,190,40)";
+                                }
+                                break;
+
+                            case 2:
+                                if (key_field.style.background == "" || key_field.style.background.substring(0,17) == "rgb(190, 190, 40)") {
+                                    key_field.style.background = "rgb(40,175,0)";
+                                }
+                                break;
+
+                            default:
+                                break;
+                        }
+                    }
+
+                    working_word = [];
+                    change_color(response.eval);
+                    current_guess += 1;
+                } else {
+                    document.getElementById("wrong_word").innerHTML = working_word.join("");
+                    let warn_box = document.getElementById("warning_div");
+                    warn_box.style.visibility = "visible";
+                    setTimeout(() => {
+                        warn_box.style.visibility = "hidden";
+                    }, 3500);
+                }
+            });
+        </script>
+    </body>
+
+</html>
