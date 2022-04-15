@@ -267,6 +267,12 @@
                         announce.innerHTML = "<p>Congrats!</p>";
                         announce.style.visibility = "visible";
                     }
+                    else if (current_guess == 5) {
+                        document.removeEventListener('keyup', handleKey);
+                        let announce = document.getElementById("warning_div");
+                        announce.innerHTML = "<p>Sorry, you lost...</p>";
+                        announce.style.visibility = "visible";
+                    }
 
                     // Mark keyboard
                     for (let i = 0; i < 5; i++) {
